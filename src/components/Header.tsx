@@ -19,13 +19,6 @@ const Header = () => {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
-      {/* Top announcement bar */}
-      <div className="bg-primary py-2 px-4 text-center">
-        <p className="text-sm text-primary-foreground font-sans">
-          ✨ Free Delivery on orders above ₹2,000 ✨
-        </p>
-      </div>
-
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16 md:h-20">
           {/* Mobile menu button */}
