@@ -8,42 +8,42 @@
 
 @layer base {
   :root {
-    /* Base colors - warm cream background with deep text */
-    --background: 40 30% 98%;
-    --foreground: 270 30% 15%;
+    /* Base colors - Black background with white text */
+    --background: 0 0% 0%;
+    --foreground: 0 0% 100%;
 
     /* Card surfaces */
-    --card: 40 25% 97%;
-    --card-foreground: 270 30% 15%;
+    --card: 0 0% 5%;
+    --card-foreground: 0 0% 100%;
 
     /* Popover */
-    --popover: 0 0% 100%;
-    --popover-foreground: 270 30% 15%;
+    --popover: 0 0% 8%;
+    --popover-foreground: 0 0% 100%;
 
     /* Primary - Deep Amethyst Purple */
-    --primary: 270 50% 35%;
-    --primary-foreground: 40 30% 98%;
+    --primary: 270 50% 60%;
+    --primary-foreground: 0 0% 100%;
 
     /* Secondary - Rose Quartz Pink */
-    --secondary: 340 40% 92%;
-    --secondary-foreground: 340 50% 30%;
+    --secondary: 340 30% 15%;
+    --secondary-foreground: 340 40% 85%;
 
-    /* Muted - Soft lavender */
-    --muted: 270 20% 94%;
-    --muted-foreground: 270 15% 45%;
+    /* Muted - Soft dark gray */
+    --muted: 0 0% 12%;
+    --muted-foreground: 0 0% 70%;
 
     /* Accent - Celestial Gold */
     --accent: 42 80% 55%;
-    --accent-foreground: 270 30% 15%;
+    --accent-foreground: 0 0% 0%;
 
     /* Destructive */
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
 
     /* Borders and inputs */
-    --border: 270 20% 88%;
-    --input: 270 20% 88%;
-    --ring: 270 50% 35%;
+    --border: 0 0% 20%;
+    --input: 0 0% 20%;
+    --ring: 270 50% 60%;
 
     --radius: 0.75rem;
 
@@ -56,64 +56,30 @@
     --crystal-moonstone: 220 30% 90%;
 
     /* Gradients */
-    --gradient-mystic: linear-gradient(135deg, hsl(270 50% 35%), hsl(340 50% 45%), hsl(42 80% 55%));
-    --gradient-aurora: linear-gradient(180deg, hsl(270 30% 95%), hsl(340 30% 95%), hsl(40 30% 97%));
+    --gradient-mystic: linear-gradient(135deg, hsl(270 50% 60%), hsl(340 50% 55%), hsl(42 80% 55%));
+    --gradient-aurora: linear-gradient(180deg, hsl(0 0% 5%), hsl(0 0% 8%), hsl(0 0% 3%));
     --gradient-crystal: linear-gradient(135deg, hsl(270 50% 55% / 0.1), hsl(340 50% 75% / 0.1));
     --gradient-gold: linear-gradient(135deg, hsl(42 70% 50%), hsl(35 80% 60%));
 
     /* Shadows */
-    --shadow-crystal: 0 4px 30px -5px hsl(270 50% 35% / 0.15);
-    --shadow-glow: 0 0 40px -10px hsl(270 50% 55% / 0.4);
+    --shadow-crystal: 0 4px 30px -5px hsl(270 50% 60% / 0.25);
+    --shadow-glow: 0 0 40px -10px hsl(270 50% 55% / 0.5);
     --shadow-gold: 0 4px 20px -5px hsl(42 80% 55% / 0.3);
 
     /* Sidebar */
-    --sidebar-background: 40 25% 97%;
-    --sidebar-foreground: 270 30% 15%;
-    --sidebar-primary: 270 50% 35%;
-    --sidebar-primary-foreground: 40 30% 98%;
-    --sidebar-accent: 270 20% 94%;
-    --sidebar-accent-foreground: 270 30% 15%;
-    --sidebar-border: 270 20% 88%;
-    --sidebar-ring: 270 50% 35%;
+    --sidebar-background: 0 0% 5%;
+    --sidebar-foreground: 0 0% 100%;
+    --sidebar-primary: 270 50% 60%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 0 0% 12%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 0 0% 20%;
+    --sidebar-ring: 270 50% 60%;
   }
 
+  /* Dark mode is now the default - keeping .dark class for compatibility */
   .dark {
-    --background: 270 30% 8%;
-    --foreground: 40 30% 95%;
-
-    --card: 270 30% 12%;
-    --card-foreground: 40 30% 95%;
-
-    --popover: 270 30% 10%;
-    --popover-foreground: 40 30% 95%;
-
-    --primary: 270 50% 65%;
-    --primary-foreground: 270 30% 8%;
-
-    --secondary: 340 30% 20%;
-    --secondary-foreground: 340 40% 85%;
-
-    --muted: 270 20% 18%;
-    --muted-foreground: 270 15% 65%;
-
-    --accent: 42 70% 55%;
-    --accent-foreground: 270 30% 8%;
-
-    --destructive: 0 62.8% 50%;
-    --destructive-foreground: 0 0% 100%;
-
-    --border: 270 20% 20%;
-    --input: 270 20% 20%;
-    --ring: 270 50% 65%;
-
-    --sidebar-background: 270 30% 10%;
-    --sidebar-foreground: 40 30% 95%;
-    --sidebar-primary: 270 50% 65%;
-    --sidebar-primary-foreground: 270 30% 8%;
-    --sidebar-accent: 270 20% 18%;
-    --sidebar-accent-foreground: 40 30% 95%;
-    --sidebar-border: 270 20% 20%;
-    --sidebar-ring: 270 50% 65%;
+    /* Same as root - dark theme is default */
   }
 }
 
