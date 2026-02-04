@@ -1,22 +1,21 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ShoppingBag, Search, Menu, X, User, Heart } from "lucide-react";
+import { ShoppingBag, Search, Menu, X, User, Heart, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import ThemeToggle from "@/components/ThemeToggle";
 import SearchModal from "@/components/SearchModal";
+import { productCatalog } from "@/data/products";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
   const [cartCount] = useState(0);
 
   const navLinks = [
     { name: "Home", href: "/" },
     { name: "Shop", href: "/shop" },
-    { name: "Bracelets", href: "/category/bracelets" },
-    { name: "Pyramids", href: "/category/pyramids" },
-    { name: "Crystal Trees", href: "/category/trees" },
     { name: "About", href: "/about" },
   ];
 
@@ -53,6 +52,56 @@ const Header = () => {
                   <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full" />
                 </Link>
               ))}
+              
+              {/* All Categories Dropdown */}
+              <div 
+                className="relative"
+                onMouseEnter={() => setIsCategoriesOpen(true)}
+                onMouseLeave={() => setIsCategoriesOpen(false)}
+              >
+                <button className="flex items-center gap-1 text-sm font-medium text-foreground/80 hover:text-primary transition-colors">
+                  All Categories
+                  <ChevronDown 
+                    size={16} 
+                    className={`transition-transform duration-200 ${isCategoriesOpen ? 'rotate-180' : ''}`} 
+                  />
+                </button>
+                
+                <AnimatePresence>
+                  {isCategoriesOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: 10 }}
+                      transition={{ duration: 0.2 }}
+                      className="absolute top-full left-0 mt-2 w-[600px] bg-card border border-border rounded-xl shadow-lg p-6 grid grid-cols-2 gap-6"
+                    >
+                      {productCatalog.map((category) => (
+                        <div key={category.id}>
+                          <Link 
+                            to={`/category/${category.slug}`}
+                            className="font-serif font-semibold text-primary hover:text-primary/80 transition-colors mb-3 block"
+                          >
+                            {category.name}
+                          </Link>
+                          <ul className="space-y-1.5">
+                            {category.subCategories.map((sub) => (
+                              <li key={sub.id}>
+                                <Link
+                                  to={`/category/${category.slug}/${sub.slug}`}
+                                  className="text-sm text-muted-foreground hover:text-foreground transition-colors block py-0.5"
+                                >
+                                  {sub.name}
+                                </Link>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      ))}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             </nav>
 
             {/* Right side icons */}
@@ -110,6 +159,44 @@ const Header = () => {
                     {link.name}
                   </Link>
                 ))}
+                
+                {/* Mobile Categories */}
+                <div className="border-t border-border pt-4">
+                  <p className="font-serif font-semibold text-primary mb-3">All Categories</p>
+                  {productCatalog.map((category) => (
+                    <div key={category.id} className="mb-4">
+                      <Link
+                        to={`/category/${category.slug}`}
+                        className="font-medium text-foreground hover:text-primary transition-colors block mb-2"
+                        onClick={() => setIsMenuOpen(false)}
+                      >
+                        {category.name}
+                      </Link>
+                      <div className="pl-4 space-y-1">
+                        {category.subCategories.slice(0, 3).map((sub) => (
+                          <Link
+                            key={sub.id}
+                            to={`/category/${category.slug}/${sub.slug}`}
+                            className="text-sm text-muted-foreground hover:text-foreground transition-colors block py-0.5"
+                            onClick={() => setIsMenuOpen(false)}
+                          >
+                            {sub.name}
+                          </Link>
+                        ))}
+                        {category.subCategories.length > 3 && (
+                          <Link
+                            to={`/category/${category.slug}`}
+                            className="text-sm text-primary hover:text-primary/80 transition-colors block py-0.5"
+                            onClick={() => setIsMenuOpen(false)}
+                          >
+                            View all {category.subCategories.length} types →
+                          </Link>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                
                 <div className="flex items-center gap-4 pt-4 border-t border-border">
                   <Button 
                     variant="ghost" 

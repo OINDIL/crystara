@@ -1,11 +1,12 @@
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 import { Heart, ShoppingBag, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
 interface ProductCardProps {
   product: {
-    id: number;
+    id: number | string;
     name: string;
     price: number;
     originalPrice?: number;
@@ -15,12 +16,15 @@ interface ProductCardProps {
     benefit?: string;
   };
   index?: number;
+  linkTo?: string;
 }
 
-const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
+const ProductCard = ({ product, index = 0, linkTo }: ProductCardProps) => {
   const discount = product.originalPrice
     ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100)
     : 0;
+
+  const productLink = linkTo || `/product/${product.id}`;
 
   return (
     <motion.div
@@ -32,7 +36,7 @@ const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
     >
       <div className="relative bg-card rounded-xl overflow-hidden shadow-crystal hover:shadow-glow transition-shadow duration-300">
         {/* Image container */}
-        <div className="relative aspect-square overflow-hidden">
+        <Link to={productLink} className="block relative aspect-square overflow-hidden">
           <img
             src={product.image}
             alt={product.name}
@@ -59,6 +63,7 @@ const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
               size="icon"
               variant="secondary"
               className="w-9 h-9 rounded-full bg-background/90 hover:bg-background"
+              onClick={(e) => e.preventDefault()}
             >
               <Heart size={16} />
             </Button>
@@ -66,6 +71,7 @@ const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
               size="icon"
               variant="secondary"
               className="w-9 h-9 rounded-full bg-background/90 hover:bg-background"
+              onClick={(e) => e.preventDefault()}
             >
               <Eye size={16} />
             </Button>
@@ -73,15 +79,19 @@ const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
 
           {/* Add to cart overlay */}
           <div className="absolute inset-x-0 bottom-0 p-3 translate-y-full group-hover:translate-y-0 transition-transform duration-300">
-            <Button className="w-full" size="sm">
+            <Button 
+              className="w-full" 
+              size="sm"
+              onClick={(e) => e.preventDefault()}
+            >
               <ShoppingBag size={16} className="mr-2" />
               Add to Cart
             </Button>
           </div>
-        </div>
+        </Link>
 
         {/* Content */}
-        <div className="p-4">
+        <Link to={productLink} className="block p-4">
           <p className="text-xs text-muted-foreground uppercase tracking-wider mb-1">
             {product.category}
           </p>
@@ -103,7 +113,7 @@ const ProductCard = ({ product, index = 0 }: ProductCardProps) => {
               </span>
             )}
           </div>
-        </div>
+        </Link>
       </div>
     </motion.div>
   );
