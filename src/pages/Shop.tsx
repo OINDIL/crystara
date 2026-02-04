@@ -1,9 +1,12 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import FeaturedProducts from "@/components/FeaturedProducts";
+import ProductCard from "@/components/ProductCard";
 import { motion } from "framer-motion";
+import { getFeaturedProducts } from "@/data/products";
 
 const Shop = () => {
+  const products = getFeaturedProducts(16);
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -20,8 +23,26 @@ const Shop = () => {
           <p className="text-muted-foreground text-center max-w-2xl mx-auto mb-12">
             Explore our complete collection of handpicked healing crystals and spiritual products.
           </p>
+
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+            {products.map((product, index) => (
+              <ProductCard
+                key={product.id}
+                product={{
+                  id: product.id,
+                  name: `${product.name} ${product.subCategory}`,
+                  price: product.price,
+                  originalPrice: product.originalPrice,
+                  image: product.image,
+                  category: product.category,
+                  benefit: product.benefit,
+                }}
+                index={index}
+                linkTo={`/product/${product.id}`}
+              />
+            ))}
+          </div>
         </motion.div>
-        <FeaturedProducts />
       </main>
       <Footer />
     </div>

@@ -1,23 +1,23 @@
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 import categoryChipBracelet from "@/assets/category-chip-bracelet.jpg";
 import categoryBeadsBracelet from "@/assets/category-beads-bracelet.jpg";
 import categoryRing from "@/assets/category-ring.jpg";
 import categoryLocket from "@/assets/category-locket.jpg";
 import categoryPyramids from "@/assets/category-pyramids.jpg";
-import { Link } from "react-router-dom";
 
 const categories = [
   {
     name: "Chip Bracelet",
     description: "Natural crystal chips",
     image: categoryChipBracelet,
-    href: "/category/chip-bracelet",
+    href: "/category/bracelets/chip-bracelet",
   },
   {
     name: "Beads Bracelet",
     description: "Polished healing beads",
     image: categoryBeadsBracelet,
-    href: "/category/beads-bracelet",
+    href: "/category/bracelets/beads-bracelet",
   },
   {
     name: "Ring",
