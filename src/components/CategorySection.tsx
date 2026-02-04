@@ -1,48 +1,41 @@
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
-import categoryBracelets from "@/assets/category-bracelets.jpg";
+import categoryChipBracelet from "@/assets/category-chip-bracelet.jpg";
+import categoryBeadsBracelet from "@/assets/category-beads-bracelet.jpg";
+import categoryRing from "@/assets/category-ring.jpg";
+import categoryLocket from "@/assets/category-locket.jpg";
 import categoryPyramids from "@/assets/category-pyramids.jpg";
-import categoryTrees from "@/assets/category-trees.jpg";
-import categoryRaw from "@/assets/category-raw.jpg";
-import categoryFigurines from "@/assets/category-figurines.jpg";
-import categoryBottles from "@/assets/category-bottles.jpg";
+import { Link } from "react-router-dom";
 
 const categories = [
   {
-    name: "Crystal Bracelets",
-    description: "Healing energy you can wear",
-    image: categoryBracelets,
-    href: "/category/bracelets",
+    name: "Chip Bracelet",
+    description: "Natural crystal chips",
+    image: categoryChipBracelet,
+    href: "/category/chip-bracelet",
   },
   {
-    name: "Crystal Pyramids",
+    name: "Beads Bracelet",
+    description: "Polished healing beads",
+    image: categoryBeadsBracelet,
+    href: "/category/beads-bracelet",
+  },
+  {
+    name: "Ring",
+    description: "Crystal energy rings",
+    image: categoryRing,
+    href: "/category/rings",
+  },
+  {
+    name: "Locket",
+    description: "Healing pendants",
+    image: categoryLocket,
+    href: "/category/lockets",
+  },
+  {
+    name: "Pyramid",
     description: "Vastu & spiritual healing",
     image: categoryPyramids,
     href: "/category/pyramids",
-  },
-  {
-    name: "Crystal Trees",
-    description: "Abundance & prosperity",
-    image: categoryTrees,
-    href: "/category/trees",
-  },
-  {
-    name: "Raw Crystals",
-    description: "Pure natural energy",
-    image: categoryRaw,
-    href: "/category/raw",
-  },
-  {
-    name: "Angel Figurines",
-    description: "Divine protection",
-    image: categoryFigurines,
-    href: "/category/figurines",
-  },
-  {
-    name: "Crystal Bottles",
-    description: "Energized hydration",
-    image: categoryBottles,
-    href: "/category/bottles",
   },
 ];
 
@@ -65,7 +58,7 @@ const CategorySection = () => {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 md:gap-6">
           {categories.map((category, index) => (
             <motion.div
               key={category.name}
@@ -83,16 +76,16 @@ const CategorySection = () => {
                   alt={category.name}
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-crystal-obsidian/80 via-crystal-obsidian/30 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
                 <div className="absolute bottom-0 left-0 right-0 p-4 md:p-6">
-                  <h3 className="text-lg md:text-xl font-serif font-semibold text-crystal-quartz mb-1">
+                  <h3 className="text-lg md:text-xl font-serif font-semibold text-white mb-1">
                     {category.name}
                   </h3>
-                  <p className="text-sm text-crystal-quartz/70">
+                  <p className="text-sm text-white/70">
                     {category.description}
                   </p>
                 </div>
-                <div className="absolute inset-0 border-2 border-accent/0 rounded-xl transition-all duration-300 group-hover:border-accent/50" />
+                <div className="absolute inset-0 border-2 border-primary/0 rounded-xl transition-all duration-300 group-hover:border-primary/50" />
               </Link>
             </motion.div>
           ))}
