@@ -4,11 +4,19 @@ import { motion } from "framer-motion";
 import { User, Package, MapPin, Settings, LogOut, Heart, ShoppingBag } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
 
 const Profile = () => {
-  // Mock user data - in a real app this would come from authentication
-  const isLoggedIn = false;
+  const { user, signOut, loading } = useAuth();
+  const navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    await signOut();
+    toast.success("Signed out successfully");
+    navigate("/");
+  };
 
   const menuItems = [
     { icon: Package, label: "My Orders", href: "/orders", description: "Track your orders" },
@@ -18,78 +26,74 @@ const Profile = () => {
     { icon: Settings, label: "Settings", href: "/settings", description: "Account settings" },
   ];
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <main className="pt-20 flex items-center justify-center min-h-[60vh]">
+          <div className="animate-pulse text-muted-foreground">Loading...</div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
       <main className="pt-20">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="container mx-auto px-4 py-16"
-        >
-          <h1 className="text-4xl md:text-5xl font-serif font-bold text-center mb-4">
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="container mx-auto px-4 py-8 md:py-16">
+          <h1 className="text-3xl md:text-5xl font-serif font-bold text-center mb-3">
             My <span className="text-gradient-mystic">Account</span>
           </h1>
-          <p className="text-muted-foreground text-center max-w-2xl mx-auto mb-12">
+          <p className="text-muted-foreground text-center max-w-2xl mx-auto mb-8 md:mb-12 text-sm md:text-base">
             Manage your profile, orders, and preferences
           </p>
 
-          {!isLoggedIn ? (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="max-w-md mx-auto"
-            >
+          {!user ? (
+            <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="max-w-md mx-auto">
               <Card className="bg-card border-border">
                 <CardHeader className="text-center">
-                  <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-secondary flex items-center justify-center">
-                    <User className="w-10 h-10 text-muted-foreground" />
+                  <div className="w-16 h-16 mx-auto mb-3 rounded-full bg-secondary flex items-center justify-center">
+                    <User className="w-8 h-8 text-muted-foreground" />
                   </div>
                   <CardTitle className="font-serif">Welcome to Crystara</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <p className="text-center text-muted-foreground">
-                    Sign in to access your orders, wishlist, and personalized recommendations
-                  </p>
+                  <p className="text-center text-muted-foreground text-sm">Sign in to access your orders, wishlist, and recommendations</p>
                   <div className="space-y-3">
-                    <Button className="w-full">Sign In</Button>
-                    <Button variant="outline" className="w-full">Create Account</Button>
+                    <Link to="/auth"><Button className="w-full">Sign In</Button></Link>
+                    <Link to="/auth"><Button variant="outline" className="w-full">Create Account</Button></Link>
                   </div>
                 </CardContent>
               </Card>
             </motion.div>
           ) : (
             <div className="max-w-4xl mx-auto">
-              <Card className="bg-card border-border mb-8">
-                <CardContent className="flex items-center gap-4 p-6">
-                  <div className="w-16 h-16 rounded-full bg-primary/20 flex items-center justify-center">
-                    <User className="w-8 h-8 text-primary" />
+              <Card className="bg-card border-border mb-6">
+                <CardContent className="flex items-center gap-4 p-4 md:p-6">
+                  <div className="w-12 h-12 md:w-16 md:h-16 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
+                    <User className="w-6 h-6 md:w-8 md:h-8 text-primary" />
                   </div>
-                  <div>
-                    <h2 className="text-xl font-serif font-semibold">John Doe</h2>
-                    <p className="text-muted-foreground">john@example.com</p>
+                  <div className="min-w-0">
+                    <h2 className="text-lg md:text-xl font-serif font-semibold truncate">{user.email}</h2>
+                    <p className="text-sm text-muted-foreground">Member since {new Date(user.created_at).toLocaleDateString()}</p>
                   </div>
                 </CardContent>
               </Card>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
                 {menuItems.map((item, index) => (
-                  <motion.div
-                    key={item.label}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1 }}
-                  >
+                  <motion.div key={item.label} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: index * 0.1 }}>
                     <Link to={item.href}>
                       <Card className="bg-card border-border hover:border-primary/30 hover:shadow-crystal transition-all cursor-pointer">
-                        <CardContent className="flex items-center gap-4 p-6">
-                          <div className="w-12 h-12 rounded-lg bg-secondary flex items-center justify-center">
-                            <item.icon className="w-6 h-6 text-primary" />
+                        <CardContent className="flex items-center gap-3 p-4">
+                          <div className="w-10 h-10 rounded-lg bg-secondary flex items-center justify-center flex-shrink-0">
+                            <item.icon className="w-5 h-5 text-primary" />
                           </div>
                           <div>
-                            <h3 className="font-semibold">{item.label}</h3>
-                            <p className="text-sm text-muted-foreground">{item.description}</p>
+                            <h3 className="font-semibold text-sm">{item.label}</h3>
+                            <p className="text-xs text-muted-foreground">{item.description}</p>
                           </div>
                         </CardContent>
                       </Card>
@@ -98,9 +102,8 @@ const Profile = () => {
                 ))}
               </div>
 
-              <Button variant="outline" className="mt-8 gap-2 text-destructive hover:text-destructive">
-                <LogOut size={18} />
-                Sign Out
+              <Button variant="outline" className="mt-6 gap-2 text-destructive hover:text-destructive text-sm" onClick={handleSignOut}>
+                <LogOut size={16} /> Sign Out
               </Button>
             </div>
           )}
