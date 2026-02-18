@@ -59,7 +59,7 @@ const Cart = () => {
         return;
       }
 
-      const response = await fetch("http://localhost:5001/create-order", {
+      const response = await fetch("https://crystara-wdmb.vercel.app/create-order", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -95,7 +95,7 @@ const Cart = () => {
         },
         handler: async (razorpayResponse: any) => {
           try {
-            const verifyRes = await fetch("http://localhost:5001/verify-payment", {
+            const verifyRes = await fetch("https://crystara-wdmb.vercel.app/verify-payment", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
