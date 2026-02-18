@@ -17,6 +17,7 @@ import Wishlist from "./pages/Wishlist";
 import Profile from "./pages/Profile";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
+import MyOrders from "./components/MyOrders";
 
 const queryClient = new QueryClient();
 
@@ -41,6 +42,7 @@ const App = () => (
                   <Route path="/wishlist" element={<Wishlist />} />
                   <Route path="/profile" element={<Profile />} />
                   <Route path="/auth" element={<Auth />} />
+                  <Route path="/orders" element={<MyOrders />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </BrowserRouter>

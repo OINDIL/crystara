@@ -1,13 +1,143 @@
+import { useState } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { motion } from "framer-motion";
 import { ShoppingBag, Minus, Plus, X, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
+import { useAuth } from "@/contexts/AuthContext";
+import { toast } from "sonner";
+
+declare global {
+  interface Window {
+    Razorpay?: any;
+  }
+}
+
+const loadRazorpayScript = () =>
+  new Promise<boolean>((resolve) => {
+    if (window.Razorpay) {
+      resolve(true);
+      return;
+    }
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.onload = () => resolve(true);
+    script.onerror = () => resolve(false);
+    document.body.appendChild(script);
+  });
 
 const Cart = () => {
   const { items, removeFromCart, updateQuantity, totalPrice, clearCart } = useCart();
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
+
+  const handleCheckout = async () => {
+    if (items.length === 0) {
+      toast.error("Your cart is empty");
+      return;
+    }
+
+    if (!user) {
+      toast.error("Please sign in to complete your purchase");
+      navigate("/auth");
+      return;
+    }
+
+    const shippingFee = totalPrice >= 999 ? 0 : 99;
+    const grandTotal = totalPrice + shippingFee;
+
+    setIsCheckingOut(true);
+
+    try {
+      const scriptLoaded = await loadRazorpayScript();
+
+      if (!scriptLoaded || !window.Razorpay) {
+        toast.error("Unable to load Razorpay payment gateway. Please try again.");
+        return;
+      }
+
+      const response = await fetch("http://localhost:5001/create-order", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          amount: grandTotal,
+          currency: "INR",
+          notes: {
+            user_email: user.email,
+          },
+        }),
+      });
+
+      const order = await response.json();
+
+      if (!response.ok || !order?.id) {
+        toast.error(order?.error || "Failed to start payment. Please try again.");
+        return;
+      }
+
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+        amount: order.amount,
+        currency: order.currency,
+        name: "Crystara",
+        description: "Crystal purchase",
+        order_id: order.id,
+        prefill: {
+          email: user.email ?? "",
+        },
+        theme: {
+          color: "#7C3AED",
+        },
+        handler: async (razorpayResponse: any) => {
+          try {
+            const verifyRes = await fetch("http://localhost:5001/verify-payment", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                razorpay_order_id: razorpayResponse.razorpay_order_id,
+                razorpay_payment_id: razorpayResponse.razorpay_payment_id,
+                razorpay_signature: razorpayResponse.razorpay_signature,
+              }),
+            });
+
+            const verifyData = await verifyRes.json();
+
+            if (!verifyRes.ok || !verifyData.valid) {
+              toast.error("Payment verification failed. If amount was deducted, please contact support.");
+              return;
+            }
+
+            toast.success("Payment successful! Thank you for your purchase.");
+            clearCart();
+            navigate("/profile");
+          } catch (error) {
+            console.error(error);
+            toast.error("Something went wrong while verifying your payment.");
+          }
+        },
+        modal: {
+          ondismiss: () => {
+            toast.info("Payment cancelled");
+          },
+        },
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+    } catch (error) {
+      console.error(error);
+      toast.error("Something went wrong while initiating payment.");
+    } finally {
+      setIsCheckingOut(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background">
@@ -94,7 +224,14 @@ const Cart = () => {
                     <span className="text-primary text-lg">₹{(totalPrice + (totalPrice >= 999 ? 0 : 99)).toLocaleString()}</span>
                   </div>
                 </div>
-                <Button className="w-full" size="lg">Proceed to Checkout</Button>
+                <Button
+                  className="w-full"
+                  size="lg"
+                  onClick={handleCheckout}
+                  disabled={isCheckingOut}
+                >
+                  {isCheckingOut ? "Processing..." : "Proceed to Checkout"}
+                </Button>
                 <p className="text-[10px] text-muted-foreground text-center mt-2">Free shipping on orders above ₹999</p>
               </div>
             </div>
