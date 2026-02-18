@@ -59,7 +59,7 @@ const Cart = () => {
         return;
       }
 
-      const response = await fetch("https://crystara-wdmb.vercel.app/create-order", {
+      const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/create-order`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -95,7 +95,7 @@ const Cart = () => {
         },
         handler: async (razorpayResponse: any) => {
           try {
-            const verifyRes = await fetch("https://crystara-wdmb.vercel.app/verify-payment", {
+            const verifyRes = await fetch(`${import.meta.env.VITE_BACKEND_URL}/verify-payment`, {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
