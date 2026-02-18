@@ -1,5 +1,6 @@
 import express from "express";
 import crypto from "crypto";
+import Razorpay from "razorpay";
 
 const app = express();
 
@@ -23,7 +24,7 @@ if (!keyId || !keySecret) {
   // eslint-disable-next-line no-console
   console.warn(
     "[razorpay] RAZORPAY_KEY_ID or RAZORPAY_KEY_SECRET not set in environment. " +
-      "Create them in your shell or a process manager before starting this server."
+    "Create them in your shell or a process manager before starting this server."
   );
 }
 
@@ -32,8 +33,6 @@ let razorpayInstance = null;
 
 function getRazorpay() {
   if (!razorpayInstance) {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const Razorpay = require("razorpay");
     razorpayInstance = new Razorpay({
       key_id: keyId,
       key_secret: keySecret,
