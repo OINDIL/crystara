@@ -1,12 +1,16 @@
 import express from "express";
 import crypto from "crypto";
 import Razorpay from "razorpay";
+import cors from "cors"
+
+cors({
+  origin: process.env.CORS_ORIGIN
+})
 
 const app = express();
 
 // Basic CORS so the Vite dev server (default 5173) can call this API
 app.use((req, res, next) => {
-  res.header("Access-Control-Allow-Origin", process.env.CORS_ORIGIN || "http://localhost:5173");
   res.header("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
   res.header("Access-Control-Allow-Headers", "Content-Type");
   if (req.method === "OPTIONS") {
