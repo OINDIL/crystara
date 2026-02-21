@@ -30,7 +30,7 @@ const loadRazorpayScript = () =>
 
 const Cart = () => {
   const { items, removeFromCart, updateQuantity, totalPrice, clearCart } = useCart();
-  const { user } = useAuth();
+  const { user, session } = useAuth();
   const navigate = useNavigate();
   const [isCheckingOut, setIsCheckingOut] = useState(false);
 
@@ -114,9 +114,57 @@ const Cart = () => {
               return;
             }
 
+            // Fetch user's address for the order
+            let shippingAddress = {};
+            try {
+              const profileRes = await fetch(`${import.meta.env.VITE_BACKEND_URL}/profile`, {
+                headers: { Authorization: `Bearer ${session?.access_token}` },
+              });
+              if (profileRes.ok) {
+                const profileData = await profileRes.json();
+                const p = profileData.profile;
+                if (p?.address_street) {
+                  shippingAddress = {
+                    street: p.address_street,
+                    city: p.address_city,
+                    state: p.address_state,
+                    zip: p.address_pincode,
+                  };
+                }
+              }
+            } catch {
+              // non-critical, continue without address
+            }
+
+            // Save the order to the database
+            const saveRes = await fetch(`${import.meta.env.VITE_BACKEND_URL}/orders`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${session?.access_token}`,
+              },
+              body: JSON.stringify({
+                orderId: razorpayResponse.razorpay_order_id,
+                paymentId: razorpayResponse.razorpay_payment_id,
+                amount: Math.round(grandTotal * 100),
+                items: items.map((item) => ({
+                  id: item.id,
+                  name: item.name,
+                  price: item.price,
+                  quantity: item.quantity,
+                })),
+                shippingAddress,
+                status: "completed",
+              }),
+            });
+
+            if (!saveRes.ok) {
+              console.error("Failed to save order record");
+            }
+
             toast.success("Payment successful! Thank you for your purchase.");
             clearCart();
-            navigate("/profile");
+            navigate("/orders");
           } catch (error) {
             console.error(error);
             toast.error("Something went wrong while verifying your payment.");
