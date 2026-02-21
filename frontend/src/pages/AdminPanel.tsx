@@ -68,6 +68,12 @@ interface Order {
     items: OrderItem[];
     status: "pending" | "completed" | "failed" | "cancelled";
     user_id: string;
+    shipping_address?: {
+        street?: string;
+        city?: string;
+        state?: string;
+        zip?: string;
+    };
     user_profiles?: {
         email: string;
         name: string;
@@ -106,11 +112,15 @@ const AdminPanel = () => {
     const [updatingOrderId, setUpdatingOrderId] = useState<string | null>(null);
 
     useEffect(() => {
-        if (!user) {
-            navigate("/auth");
-            return;
-        }
+        // if (!user) {
+        //     navigate("/auth");
+        //     return;
+        // }
         // TODO: Add role verification - check if user is admin
+        // if (!(user.role === "Admin")) {
+        //     navigate("/auth")
+        //     return;
+        // }
         fetchStats();
         fetchOrders();
     }, [user, navigate, statusFilter, currentPage]);
@@ -118,7 +128,7 @@ const AdminPanel = () => {
     const fetchStats = async () => {
         try {
             const response = await fetch(
-                `${import.meta.env.VITE_SERVER_URL}/admin/orders/stats/overview`,
+                `${import.meta.env.VITE_BACKEND_URL}/admin/orders/stats/overview`,
                 {
                     headers: {
                         Authorization: `Bearer ${session?.access_token}`,
@@ -142,7 +152,7 @@ const AdminPanel = () => {
             setLoading(true);
             setError(null);
 
-            let url = `${import.meta.env.VITE_SERVER_URL}/admin/orders?page=${currentPage}&limit=20`;
+            let url = `${import.meta.env.VITE_BACKEND_URL}/admin/orders?page=${currentPage}&limit=20`;
 
             if (statusFilter !== "all") {
                 url += `&status=${statusFilter}`;
@@ -177,7 +187,7 @@ const AdminPanel = () => {
             setUpdatingOrderId(orderId);
 
             const response = await fetch(
-                `${import.meta.env.VITE_SERVER_URL}/admin/orders/${orderId}`,
+                `${import.meta.env.VITE_BACKEND_URL}/admin/orders/${orderId}`,
                 {
                     method: "PATCH",
                     headers: {
@@ -521,7 +531,21 @@ const AdminPanel = () => {
                                                                                 )
                                                                             }
                                                                         >
+                                                                            <CheckCircle className="w-4 h-4 mr-2 text-green-600" />
                                                                             Mark as Completed
+                                                                        </DropdownMenuItem>
+                                                                    )}
+                                                                    {order.status !== "pending" && (
+                                                                        <DropdownMenuItem
+                                                                            onClick={() =>
+                                                                                handleUpdateOrderStatus(
+                                                                                    order.id,
+                                                                                    "pending"
+                                                                                )
+                                                                            }
+                                                                        >
+                                                                            <Clock className="w-4 h-4 mr-2 text-yellow-600" />
+                                                                            Mark as Pending
                                                                         </DropdownMenuItem>
                                                                     )}
                                                                     {order.status !== "failed" && (
@@ -533,7 +557,21 @@ const AdminPanel = () => {
                                                                                 )
                                                                             }
                                                                         >
+                                                                            <XCircle className="w-4 h-4 mr-2 text-red-600" />
                                                                             Mark as Failed
+                                                                        </DropdownMenuItem>
+                                                                    )}
+                                                                    {order.status !== "cancelled" && (
+                                                                        <DropdownMenuItem
+                                                                            onClick={() =>
+                                                                                handleUpdateOrderStatus(
+                                                                                    order.id,
+                                                                                    "cancelled"
+                                                                                )
+                                                                            }
+                                                                        >
+                                                                            <XCircle className="w-4 h-4 mr-2 text-gray-600" />
+                                                                            Mark as Cancelled
                                                                         </DropdownMenuItem>
                                                                     )}
                                                                 </DropdownMenuContent>
@@ -685,6 +723,23 @@ const AdminPanel = () => {
                                     </div>
                                 </div>
 
+                                {/* Shipping Address */}
+                                {selectedOrder.shipping_address && (
+                                    <div>
+                                        <h3 className="font-semibold text-gray-900 dark:text-white mb-3">
+                                            Shipping Address
+                                        </h3>
+                                        <div className="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg text-sm space-y-1">
+                                            {selectedOrder.shipping_address.street && (
+                                                <p className="text-gray-900 dark:text-white">{selectedOrder.shipping_address.street}</p>
+                                            )}
+                                            <p className="text-gray-900 dark:text-white">
+                                                {[selectedOrder.shipping_address.city, selectedOrder.shipping_address.state, selectedOrder.shipping_address.zip].filter(Boolean).join(", ")}
+                                            </p>
+                                        </div>
+                                    </div>
+                                )}
+
                                 {/* Payment Info */}
                                 <div>
                                     <h3 className="font-semibold text-gray-900 dark:text-white mb-3">
@@ -720,37 +775,29 @@ const AdminPanel = () => {
                                     </div>
                                 </div>
 
-                                {/* Action Buttons */}
-                                <div className="flex gap-3 pt-6 border-t border-gray-200 dark:border-gray-700">
-                                    {selectedOrder.status !== "completed" && (
-                                        <Button
-                                            onClick={() => {
-                                                handleUpdateOrderStatus(
-                                                    selectedOrder.id,
-                                                    "completed"
-                                                );
-                                                setSelectedOrder(null);
-                                            }}
-                                            className="flex-1 bg-green-600 hover:bg-green-700"
-                                        >
-                                            Mark as Completed
-                                        </Button>
-                                    )}
-                                    {selectedOrder.status !== "failed" && (
-                                        <Button
-                                            onClick={() => {
-                                                handleUpdateOrderStatus(
-                                                    selectedOrder.id,
-                                                    "failed"
-                                                );
-                                                setSelectedOrder(null);
-                                            }}
-                                            variant="outline"
-                                            className="flex-1"
-                                        >
-                                            Mark as Failed
-                                        </Button>
-                                    )}
+                                {/* Change Status */}
+                                <div className="pt-6 border-t border-gray-200 dark:border-gray-700">
+                                    <h3 className="font-semibold text-gray-900 dark:text-white mb-3">
+                                        Update Status
+                                    </h3>
+                                    <div className="flex flex-wrap gap-2">
+                                        {(["pending", "completed", "failed", "cancelled"] as const).map((status) => (
+                                            <Button
+                                                key={status}
+                                                variant={selectedOrder.status === status ? "default" : "outline"}
+                                                size="sm"
+                                                disabled={selectedOrder.status === status || updatingOrderId === selectedOrder.id}
+                                                onClick={() => {
+                                                    handleUpdateOrderStatus(selectedOrder.id, status);
+                                                    setSelectedOrder({ ...selectedOrder, status });
+                                                }}
+                                                className="gap-1.5 capitalize"
+                                            >
+                                                {getStatusIcon(status)}
+                                                {status}
+                                            </Button>
+                                        ))}
+                                    </div>
                                 </div>
                             </div>
                         </motion.div>

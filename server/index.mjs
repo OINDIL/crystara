@@ -238,6 +238,7 @@ app.get("/orders/:id", verifyAuth, async (req, res) => {
 
 // Admin: Get all orders (paginated)
 app.get("/admin/orders", verifyAuth, verifyAdmin, async (req, res) => {
+  console.log("hit /admin/orders")
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 20;
@@ -309,6 +310,7 @@ app.patch("/admin/orders/:id", verifyAuth, verifyAdmin, async (req, res) => {
 
 // Admin: Get order statistics
 app.get("/admin/orders/stats/overview", verifyAuth, verifyAdmin, async (req, res) => {
+  console.log("hit")
   try {
     const { data: orders, error } = await supabase
       .from("orders")
@@ -334,10 +336,118 @@ app.get("/admin/orders/stats/overview", verifyAuth, verifyAdmin, async (req, res
   }
 });
 
+// Save onboarding profile
+app.post("/onboarding/profile", verifyAuth, async (req, res) => {
+  try {
+    const { name, phone, address_street, address_city, address_state, address_pincode } = req.body;
+
+    if (!name || !phone) {
+      return res.status(400).json({ error: "Name and phone are required" });
+    }
+
+    const { data, error } = await supabase
+      .from("user_profiles")
+      .upsert(
+        {
+          user_id: req.user.id,
+          email: req.user.email,
+          name,
+          phone,
+          address_street: address_street || null,
+          address_city: address_city || null,
+          address_state: address_state || null,
+          address_pincode: address_pincode || null,
+          updated_at: new Date().toISOString(),
+        },
+        { onConflict: "user_id" }
+      )
+      .select();
+
+    if (error) {
+      return res.status(400).json({ error: error.message });
+    }
+
+    return res.json({ success: true, profile: data[0] });
+  } catch (error) {
+    console.error("[onboarding] Error saving profile:", error);
+    return res.status(500).json({ error: "Failed to save profile" });
+  }
+});
+
+// Check onboarding status
+app.get("/onboarding/status", verifyAuth, async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from("user_profiles")
+      .select("name")
+      .eq("user_id", req.user.id)
+      .single();
+
+    if (error || !data?.name) {
+      return res.json({ isOnboarded: false });
+    }
+
+    return res.json({ isOnboarded: true });
+  } catch (error) {
+    console.error("[onboarding] Error checking status:", error);
+    return res.json({ isOnboarded: false });
+  }
+});
+
+// Get user profile
+app.get("/profile", verifyAuth, async (req, res) => {
+  try {
+    const { data, error } = await supabase
+      .from("user_profiles")
+      .select("*")
+      .eq("user_id", req.user.id)
+      .single();
+
+    if (error) {
+      return res.status(404).json({ error: "Profile not found" });
+    }
+
+    return res.json({ profile: data });
+  } catch (error) {
+    console.error("[profile] Error fetching profile:", error);
+    return res.status(500).json({ error: "Failed to fetch profile" });
+  }
+});
+
+// Update user profile
+app.patch("/profile", verifyAuth, async (req, res) => {
+  try {
+    const { name, phone, address_street, address_city, address_state, address_pincode, saved_addresses } = req.body;
+
+    const updates = {};
+    if (name !== undefined) updates.name = name;
+    if (phone !== undefined) updates.phone = phone;
+    if (address_street !== undefined) updates.address_street = address_street;
+    if (address_city !== undefined) updates.address_city = address_city;
+    if (address_state !== undefined) updates.address_state = address_state;
+    if (address_pincode !== undefined) updates.address_pincode = address_pincode;
+    if (saved_addresses !== undefined) updates.saved_addresses = saved_addresses;
+    updates.updated_at = new Date().toISOString();
+
+    const { data, error } = await supabase
+      .from("user_profiles")
+      .update(updates)
+      .eq("user_id", req.user.id)
+      .select();
+
+    if (error) {
+      return res.status(400).json({ error: error.message });
+    }
+
+    return res.json({ success: true, profile: data[0] });
+  } catch (error) {
+    console.error("[profile] Error updating profile:", error);
+    return res.status(500).json({ error: "Failed to update profile" });
+  }
+});
+
 const port = process.env.PORT || 5001;
 
 app.listen(port, () => {
-  // eslint-disable-next-line no-console
   console.log(`[razorpay] Server listening on http://localhost:${port}`);
 });
-

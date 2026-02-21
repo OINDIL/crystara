@@ -1,5 +1,5 @@
+import Orders from "@/pages/Orders";
+
 export default function MyOrders() {
-    return (
-        <div>My orders</div>
-    )
+    return <Orders />;
 }

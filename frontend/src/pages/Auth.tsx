@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "@/contexts/AuthContext";
 import { toast } from "sonner";
+import OnboardingForm from "@/components/OnboardingForm";
 
 const Auth = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -16,7 +17,8 @@ const Auth = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const { signIn, signUp } = useAuth();
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const { signIn, signUp, isOnboarded, checkOnboardingStatus } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -29,7 +31,13 @@ const Auth = () => {
           toast.error(error.message);
         } else {
           toast.success("Welcome back!");
-          navigate("/profile");
+          // Check if user still needs onboarding
+          const onboarded = await checkOnboardingStatus();
+          if (onboarded) {
+            navigate("/profile");
+          } else {
+            setShowOnboarding(true);
+          }
         }
       } else {
         if (password.length < 6) {
@@ -42,7 +50,7 @@ const Auth = () => {
           toast.error(error.message);
         } else {
           toast.success("Account created successfully!");
-          navigate("/profile");
+          setShowOnboarding(true);
         }
       }
     } catch {
@@ -50,6 +58,10 @@ const Auth = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleOnboardingComplete = () => {
+    navigate("/profile");
   };
 
   return (
@@ -62,68 +74,78 @@ const Auth = () => {
           transition={{ duration: 0.6 }}
           className="container mx-auto px-4 py-16 flex items-center justify-center min-h-[70vh]"
         >
-          <Card className="w-full max-w-md bg-card border-border shadow-crystal">
-            <CardHeader className="text-center pb-2">
-              <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
-                <Sparkles className="w-8 h-8 text-primary" />
-              </div>
-              <CardTitle className="text-2xl font-serif">
-                {isLogin ? "Welcome Back" : "Create Account"}
-              </CardTitle>
-              <p className="text-sm text-muted-foreground mt-2">
-                {isLogin
-                  ? "Sign in to access your crystals journey"
-                  : "Join Crystara and discover healing crystals"}
-              </p>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                  <Input
-                    type="email"
-                    placeholder="Email address"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="pl-10"
-                    required
-                  />
+          {showOnboarding ? (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.4 }}
+            >
+              <OnboardingForm onComplete={handleOnboardingComplete} />
+            </motion.div>
+          ) : (
+            <Card className="w-full max-w-md bg-card border-border shadow-crystal">
+              <CardHeader className="text-center pb-2">
+                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-primary/10 flex items-center justify-center">
+                  <Sparkles className="w-8 h-8 text-primary" />
                 </div>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                  <Input
-                    type={showPassword ? "text" : "password"}
-                    placeholder="Password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="pl-10 pr-10"
-                    required
-                  />
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                  >
-                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </button>
-                </div>
-                <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? "Please wait..." : isLogin ? "Sign In" : "Create Account"}
-                </Button>
-              </form>
-              <div className="mt-6 text-center">
-                <p className="text-sm text-muted-foreground">
-                  {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
-                  <button
-                    onClick={() => setIsLogin(!isLogin)}
-                    className="text-primary hover:underline font-medium"
-                  >
-                    {isLogin ? "Sign Up" : "Sign In"}
-                  </button>
+                <CardTitle className="text-2xl font-serif">
+                  {isLogin ? "Welcome Back" : "Create Account"}
+                </CardTitle>
+                <p className="text-sm text-muted-foreground mt-2">
+                  {isLogin
+                    ? "Sign in to access your crystals journey"
+                    : "Join Crystara and discover healing crystals"}
                 </p>
-              </div>
-            </CardContent>
-          </Card>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div className="relative">
+                    <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                    <Input
+                      type="email"
+                      placeholder="Email address"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="pl-10"
+                      required
+                    />
+                  </div>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                    <Input
+                      type={showPassword ? "text" : "password"}
+                      placeholder="Password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="pl-10 pr-10"
+                      required
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                    >
+                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  </div>
+                  <Button type="submit" className="w-full" disabled={loading}>
+                    {loading ? "Please wait..." : isLogin ? "Sign In" : "Create Account"}
+                  </Button>
+                </form>
+                <div className="mt-6 text-center">
+                  <p className="text-sm text-muted-foreground">
+                    {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
+                    <button
+                      onClick={() => setIsLogin(!isLogin)}
+                      className="text-primary hover:underline font-medium"
+                    >
+                      {isLogin ? "Sign Up" : "Sign In"}
+                    </button>
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          )}
         </motion.div>
       </main>
       <Footer />

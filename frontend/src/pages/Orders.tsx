@@ -57,7 +57,7 @@ const Orders = () => {
             setError(null);
 
             const response = await fetch(
-                `${import.meta.env.VITE_SERVER_URL}/orders/user/history`,
+                `${import.meta.env.VITE_BACKEND_URL}/orders/user/history`,
                 {
                     headers: {
                         Authorization: `Bearer ${session?.access_token}`,

@@ -16,8 +16,11 @@ import Cart from "./pages/Cart";
 import Wishlist from "./pages/Wishlist";
 import Profile from "./pages/Profile";
 import Auth from "./pages/Auth";
+import Settings from "./pages/Settings";
+import Addresses from "./pages/Addresses";
 import NotFound from "./pages/NotFound";
 import MyOrders from "./components/MyOrders";
+import AdminPanel from "./pages/AdminPanel";
 
 const queryClient = new QueryClient();
 
@@ -42,7 +45,10 @@ const App = () => (
                   <Route path="/wishlist" element={<Wishlist />} />
                   <Route path="/profile" element={<Profile />} />
                   <Route path="/auth" element={<Auth />} />
+                  <Route path="/settings" element={<Settings />} />
+                  <Route path="/addresses" element={<Addresses />} />
                   <Route path="/orders" element={<MyOrders />} />
+                  <Route path="/admin" element={<AdminPanel />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </BrowserRouter>
