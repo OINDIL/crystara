@@ -205,7 +205,7 @@ const Orders = () => {
                                                     </div>
                                                     <div className="flex items-center gap-2">
                                                         <DollarSign className="w-4 h-4" />
-                                                        ₹{order.amount.toFixed(2)}
+                                                        ₹{(order.amount / 100).toFixed(2)}
                                                     </div>
                                                 </div>
                                             </div>
