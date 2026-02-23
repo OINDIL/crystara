@@ -8,6 +8,7 @@ export interface ProductVariant {
   price: number;
   originalPrice?: number;
   image: string;
+  galleryImages?: string[];
   benefit: string;
 }
 

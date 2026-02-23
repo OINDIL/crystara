@@ -10,6 +10,7 @@ const ALL_PRODUCTS_QUERY = `*[_type == "product"]{
   price,
   originalPrice,
   "image": Image.asset->url,
+  "galleryImages": galleryImages[].asset->url,
   benefit,
   "category": category->name,
   "categorySlug": category->slug.current,
@@ -32,12 +33,14 @@ const CATEGORIES_QUERY = `*[_type == "productCategory"] | order(name asc) {
       price,
       originalPrice,
       "image": Image.asset->url,
+      "galleryImages": galleryImages[].asset->url,
       benefit
     }
   }
 }`;
 
 export type FlatProduct = ProductVariant & {
+    galleryImages?: string[];
     category: string;
     categorySlug: string;
     subCategory: string;

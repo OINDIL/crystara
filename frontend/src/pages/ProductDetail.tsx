@@ -7,7 +7,7 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useProductById, useAllProducts } from "@/hooks/useProducts";
-import { getProductImages } from "@/data/productImages";
+
 import ProductCard from "@/components/ProductCard";
 import ProductImageGallery from "@/components/ProductImageGallery";
 import { useCart } from "@/contexts/CartContext";
@@ -27,9 +27,10 @@ const ProductDetail = () => {
     ? allProducts.filter((p) => p.categorySlug === product.categorySlug && p.id !== product.id).slice(0, 4)
     : [];
 
-  // Get gallery images
-  const productIndex = product ? allProducts.findIndex((p) => p.id === product.id) : 0;
-  const galleryImages = product ? getProductImages(product.categorySlug, product.subCategorySlug, productIndex) : [];
+  // Build gallery from Sanity images (primary + gallery), fallback to just primary
+  const galleryImages = product
+    ? [product.image, ...(product.galleryImages || [])].filter(Boolean)
+    : [];
 
   if (isLoading) {
     return (
