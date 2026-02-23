@@ -9,7 +9,7 @@ const ALL_PRODUCTS_QUERY = `*[_type == "product"]{
   stone,
   price,
   originalPrice,
-  "image": imageUrl,
+  "image": Image.asset->url,
   benefit,
   "category": category->name,
   "categorySlug": category->slug.current,
@@ -31,7 +31,7 @@ const CATEGORIES_QUERY = `*[_type == "productCategory"] | order(name asc) {
       stone,
       price,
       originalPrice,
-      "image": imageUrl,
+      "image": Image.asset->url,
       benefit
     }
   }
