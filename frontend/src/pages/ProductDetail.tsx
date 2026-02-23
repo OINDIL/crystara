@@ -6,7 +6,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { getProductById, getAllProducts } from "@/data/products";
+import { useProductById, useAllProducts } from "@/hooks/useProducts";
 import { getProductImages } from "@/data/productImages";
 import ProductCard from "@/components/ProductCard";
 import ProductImageGallery from "@/components/ProductImageGallery";
@@ -19,17 +19,39 @@ const ProductDetail = () => {
   const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
 
-  const product = productId ? getProductById(productId) : null;
+  const { data: product, isLoading } = useProductById(productId);
+  const { data: allProducts = [] } = useAllProducts();
   const isWishlisted = product ? isInWishlist(product.id) : false;
 
   const relatedProducts = product
-    ? getAllProducts().filter((p) => p.categorySlug === product.categorySlug && p.id !== product.id).slice(0, 4)
+    ? allProducts.filter((p) => p.categorySlug === product.categorySlug && p.id !== product.id).slice(0, 4)
     : [];
 
   // Get gallery images
-  const allProducts = getAllProducts();
   const productIndex = product ? allProducts.findIndex((p) => p.id === product.id) : 0;
   const galleryImages = product ? getProductImages(product.categorySlug, product.subCategorySlug, productIndex) : [];
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Header />
+        <main className="pt-20">
+          <div className="container mx-auto px-4 py-8">
+            <div className="grid lg:grid-cols-2 gap-12">
+              <div className="animate-pulse bg-muted rounded-xl h-96" />
+              <div className="space-y-4">
+                <div className="animate-pulse bg-muted rounded h-8 w-3/4" />
+                <div className="animate-pulse bg-muted rounded h-6 w-1/2" />
+                <div className="animate-pulse bg-muted rounded h-10 w-1/3" />
+                <div className="animate-pulse bg-muted rounded h-24 w-full" />
+              </div>
+            </div>
+          </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   if (!product) {
     return (

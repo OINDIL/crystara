@@ -3,10 +3,10 @@ import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import ProductCard from "./ProductCard";
-import { getFeaturedProducts } from "@/data/products";
+import { useFeaturedProducts } from "@/hooks/useProducts";
 
 const FeaturedProducts = () => {
-  const products = getFeaturedProducts(8);
+  const { data: products, isLoading } = useFeaturedProducts(8);
 
   return (
     <section className="py-20 bg-background">
@@ -34,24 +34,32 @@ const FeaturedProducts = () => {
           </Link>
         </motion.div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-          {products.map((product, index) => (
-            <ProductCard
-              key={product.id}
-              product={{
-                id: product.id,
-                name: `${product.name} ${product.subCategory}`,
-                price: product.price,
-                originalPrice: product.originalPrice,
-                image: product.image,
-                category: product.category,
-                benefit: product.benefit,
-              }}
-              index={index}
-              linkTo={`/product/${product.id}`}
-            />
-          ))}
-        </div>
+        {isLoading ? (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div key={i} className="animate-pulse bg-muted rounded-xl h-64" />
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+            {products.map((product, index) => (
+              <ProductCard
+                key={product.id}
+                product={{
+                  id: product.id,
+                  name: `${product.name} ${product.subCategory}`,
+                  price: product.price,
+                  originalPrice: product.originalPrice,
+                  image: product.image,
+                  category: product.category,
+                  benefit: product.benefit,
+                }}
+                index={index}
+                linkTo={`/product/${product.id}`}
+              />
+            ))}
+          </div>
+        )}
       </div>
     </section>
   );

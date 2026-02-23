@@ -4,7 +4,7 @@ import { Search, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { searchProducts } from "@/data/products";
+import { useSearchProducts } from "@/hooks/useProducts";
 
 interface SearchModalProps {
   isOpen: boolean;
@@ -13,8 +13,9 @@ interface SearchModalProps {
 
 const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
   const [query, setQuery] = useState("");
-  
-  const results = query.length >= 2 ? searchProducts(query).slice(0, 8) : [];
+
+  const { data: results } = useSearchProducts(query);
+  const displayResults = results.slice(0, 8);
 
   const handleClose = () => {
     setQuery("");
@@ -36,7 +37,7 @@ const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
                 <X size={24} />
               </Button>
             </div>
-            
+
             <motion.div
               initial={{ y: -20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
@@ -54,8 +55,8 @@ const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
                   autoFocus
                 />
               </div>
-              
-              {results.length > 0 && (
+
+              {displayResults.length > 0 && (
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -65,7 +66,7 @@ const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
                     Found {results.length} results for "{query}"
                   </p>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {results.map((product) => (
+                    {displayResults.map((product) => (
                       <Link
                         key={product.id}
                         to={`/product/${product.id}`}
@@ -94,7 +95,7 @@ const SearchModal = ({ isOpen, onClose }: SearchModalProps) => {
                 </motion.div>
               )}
 
-              {query.length >= 2 && results.length === 0 && (
+              {query.length >= 2 && displayResults.length === 0 && (
                 <motion.div
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}

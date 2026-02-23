@@ -2,10 +2,10 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ProductCard from "@/components/ProductCard";
 import { motion } from "framer-motion";
-import { getFeaturedProducts } from "@/data/products";
+import { useFeaturedProducts } from "@/hooks/useProducts";
 
 const Shop = () => {
-  const products = getFeaturedProducts(16);
+  const { data: products, isLoading } = useFeaturedProducts(16);
 
   return (
     <div className="min-h-screen bg-background">
@@ -24,24 +24,32 @@ const Shop = () => {
             Explore our complete collection of handpicked healing crystals and spiritual products.
           </p>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-            {products.map((product, index) => (
-              <ProductCard
-                key={product.id}
-                product={{
-                  id: product.id,
-                  name: `${product.name} ${product.subCategory}`,
-                  price: product.price,
-                  originalPrice: product.originalPrice,
-                  image: product.image,
-                  category: product.category,
-                  benefit: product.benefit,
-                }}
-                index={index}
-                linkTo={`/product/${product.id}`}
-              />
-            ))}
-          </div>
+          {isLoading ? (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+              {Array.from({ length: 16 }).map((_, i) => (
+                <div key={i} className="animate-pulse bg-muted rounded-xl h-64" />
+              ))}
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+              {products.map((product, index) => (
+                <ProductCard
+                  key={product.id}
+                  product={{
+                    id: product.id,
+                    name: `${product.name} ${product.subCategory}`,
+                    price: product.price,
+                    originalPrice: product.originalPrice,
+                    image: product.image,
+                    category: product.category,
+                    benefit: product.benefit,
+                  }}
+                  index={index}
+                  linkTo={`/product/${product.id}`}
+                />
+              ))}
+            </div>
+          )}
         </motion.div>
       </main>
       <Footer />

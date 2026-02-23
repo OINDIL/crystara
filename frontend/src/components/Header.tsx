@@ -5,7 +5,7 @@ import { ShoppingBag, Search, Menu, X, User, Heart, ChevronDown } from "lucide-r
 import { Button } from "@/components/ui/button";
 import ThemeToggle from "@/components/ThemeToggle";
 import SearchModal from "@/components/SearchModal";
-import { productCatalog } from "@/data/products";
+import { useProductCatalog } from "@/hooks/useProducts";
 import { useCart } from "@/contexts/CartContext";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -15,6 +15,7 @@ const Header = () => {
   const [isCategoriesOpen, setIsCategoriesOpen] = useState(false);
   const { totalItems } = useCart();
   const { user } = useAuth();
+  const { data: productCatalog = [] } = useProductCatalog();
 
   const navLinks = [
     { name: "Home", href: "/" },
