@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
-import { useProductCatalog } from "@/hooks/useProducts";
 
 import heroSlide1 from "@/assets/hero-slide-1.jpg";
 import heroSlide2 from "@/assets/hero-slide-2.jpg";
@@ -24,7 +23,6 @@ const categoryIcons: Record<string, string> = {
 
 const HeroSection = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const { data: categories = [] } = useProductCatalog();
 
   const nextSlide = useCallback(() => {
     setCurrentSlide((prev) => (prev + 1) % slides.length);
@@ -60,8 +58,8 @@ const HeroSection = () => {
       {/* ─── Category Cards — top strip ─── */}
 
 
-      {/* ─── Main content — centred ─── */}
-      <div className="relative z-10 flex-1 flex items-center justify-center px-6">
+      {/* ─── Text content — top ─── */}
+      <div className="relative z-10 pt-28 sm:pt-36 px-6">
         <div className="text-center max-w-3xl mx-auto">
           <motion.p
             initial={{ opacity: 0, y: 16 }}
@@ -89,30 +87,35 @@ const HeroSection = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.7 }}
-            className="text-sm sm:text-base md:text-lg text-white/70 max-w-md mx-auto mb-9 font-light leading-relaxed"
+            className="text-sm sm:text-base md:text-lg text-white/70 max-w-md mx-auto font-light leading-relaxed"
             style={{ textShadow: "0 2px 8px rgba(0,0,0,0.5)" }}
           >
             Discover our curated collection of healing crystals, designed to
             bring balance and positive energy into your life.
           </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.9 }}
-          >
-            <Link to="/shop">
-              <Button
-                size="lg"
-                className="group rounded-full px-8 py-6 text-sm tracking-wide uppercase bg-white text-black hover:bg-white/90 transition-all duration-300"
-              >
-                Explore Collection
-                <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-              </Button>
-            </Link>
-          </motion.div>
         </div>
       </div>
+
+      {/* Spacer — lets the image breathe */}
+      <div className="flex-1" />
+
+      {/* ─── CTA button — bottom ─── */}
+      <motion.div
+        className="relative z-10 pb-20 flex justify-center"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, delay: 0.9 }}
+      >
+        <Link to="/shop">
+          <Button
+            size="lg"
+            className="group rounded-full px-8 py-6 text-sm tracking-wide uppercase bg-white text-black hover:bg-white/90 transition-all duration-300"
+          >
+            Explore Collection
+            <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+          </Button>
+        </Link>
+      </motion.div>
 
       {/* ─── Minimal progress bar ─── */}
       <div className="relative z-10 pb-8 flex justify-center">

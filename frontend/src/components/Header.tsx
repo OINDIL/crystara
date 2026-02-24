@@ -42,7 +42,7 @@ const Header = () => {
               <h1 className="text-lg md:text-3xl font-serif font-bold text-gradient-mystic leading-tight">
                 Crystara
               </h1>
-              <p className="text-[7px] md:text-[10px] tracking-widest text-muted-foreground -mt-0.5">
+              <p className="text-[10px] tracking-widest text-muted-foreground -mt-0.5">
                 Crafted for Energy. Designed for You.
               </p>
             </Link>
