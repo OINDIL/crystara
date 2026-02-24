@@ -72,15 +72,15 @@ const HeroSection = () => {
           </motion.p>
 
           <motion.h1
-            initial={{ opacity: 0, y: 24 }}
+            initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.5 }}
-            className="text-4xl sm:text-5xl md:text-7xl font-serif font-semibold leading-[1.1] text-white mb-5"
-            style={{ textShadow: "0 2px 16px rgba(0,0,0,0.6), 0 4px 32px rgba(0,0,0,0.3)" }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-serif font-bold leading-tight mb-3 sm:mb-6"
           >
-            Crystals that
-            <br />
-            <span className="italic font-normal">speak to your soul</span>
+            Discover the{" "}
+            <span className="text-gradient-mystic">Magic</span> of{" "}
+            <br className="hidden md:block" />
+            Healing Crystals
           </motion.h1>
 
           <motion.p

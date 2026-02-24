@@ -1,7 +1,7 @@
 import { useParams, Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Heart, ShoppingBag, Minus, Plus, ChevronLeft, Sparkles, Shield, Truck, RotateCcw } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -16,6 +16,10 @@ import { useWishlist } from "@/contexts/WishlistContext";
 const ProductDetail = () => {
   const { productId } = useParams<{ productId: string }>();
   const [quantity, setQuantity] = useState(1);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [productId]);
   const { addToCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
 
