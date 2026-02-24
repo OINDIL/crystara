@@ -1,7 +1,9 @@
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, Sparkles, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
+import { useProductCatalog } from "@/hooks/useProducts";
 
 import heroSlide1 from "@/assets/hero-slide-1.jpg";
 import heroSlide2 from "@/assets/hero-slide-2.jpg";
@@ -11,152 +13,141 @@ import heroSlide5 from "@/assets/hero-slide-5.jpg";
 
 const slides = [heroSlide1, heroSlide2, heroSlide3, heroSlide4, heroSlide5];
 
+/* Emoji icons per category for a clean, minimal look */
+const categoryIcons: Record<string, string> = {
+  bracelets: "📿",
+  rings: "💍",
+  lockets: "🔮",
+  pyramids: "🔺",
+  frames: "🖼️",
+};
+
 const HeroSection = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const { data: categories = [] } = useProductCatalog();
 
   const nextSlide = useCallback(() => {
     setCurrentSlide((prev) => (prev + 1) % slides.length);
   }, []);
 
-  const prevSlide = useCallback(() => {
-    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
-  }, []);
-
-  // Auto-play slideshow
   useEffect(() => {
-    const interval = setInterval(nextSlide, 5000);
+    const interval = setInterval(nextSlide, 6000);
     return () => clearInterval(interval);
   }, [nextSlide]);
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-      {/* Background Slideshow */}
+    <section className="relative h-screen flex flex-col overflow-hidden">
+      {/* Background — slow crossfade */}
       <div className="absolute inset-0">
         <AnimatePresence mode="wait">
           <motion.img
             key={currentSlide}
             src={slides[currentSlide]}
-            alt={`Crystal collection slide ${currentSlide + 1}`}
+            alt="Crystara collection"
             className="w-full h-full object-cover"
-            initial={{ opacity: 0, scale: 1.1 }}
+            initial={{ opacity: 0, scale: 1.05 }}
             animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            transition={{ duration: 0.7 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 1.2, ease: "easeInOut" }}
           />
         </AnimatePresence>
-        <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/70 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent" />
+
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-black/40" />
+        {/* Extra radial darkening behind centre text */}
+        <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse at center 60%, rgba(0,0,0,0.55) 0%, transparent 70%)" }} />
       </div>
 
-      {/* Slideshow Navigation Arrows */}
-      <button
-        onClick={prevSlide}
-        className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-background/30 backdrop-blur-sm border border-border hover:bg-background/50 transition-colors"
-        aria-label="Previous slide"
-      >
-        <ChevronLeft className="w-6 h-6 text-foreground" />
-      </button>
-      <button
-        onClick={nextSlide}
-        className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-background/30 backdrop-blur-sm border border-border hover:bg-background/50 transition-colors"
-        aria-label="Next slide"
-      >
-        <ChevronRight className="w-6 h-6 text-foreground" />
-      </button>
+      {/* ─── Category Cards — top strip ─── */}
 
-      {/* Slide Indicators */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-20 flex gap-2">
-        {slides.map((_, index) => (
-          <button
-            key={index}
-            onClick={() => setCurrentSlide(index)}
-            className={`w-3 h-3 rounded-full transition-all ${
-              index === currentSlide
-                ? "bg-primary w-8"
-                : "bg-foreground/30 hover:bg-foreground/50"
-            }`}
-            aria-label={`Go to slide ${index + 1}`}
-          />
-        ))}
-      </div>
 
-      {/* Content */}
-      <div className="relative container mx-auto px-4 pt-32 pb-20 z-10">
-        <div className="max-w-2xl">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
+      {/* ─── Main content — centred ─── */}
+      <div className="relative z-10 flex-1 flex items-center justify-center px-6">
+        <div className="text-center max-w-3xl mx-auto">
+          <motion.p
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="flex items-center gap-2 mb-6"
+            transition={{ duration: 0.8, delay: 0.3 }}
+            className="text-xs sm:text-sm tracking-[0.35em] uppercase text-white/70 mb-5 font-light"
+            style={{ textShadow: "0 2px 8px rgba(0,0,0,0.5)" }}
           >
-            <Sparkles className="w-5 h-5 text-accent" />
-            <span className="text-sm font-medium tracking-wider uppercase text-muted-foreground">
-              Embrace Divine Energy
-            </span>
-          </motion.div>
+            Handpicked · Natural · Energized
+          </motion.p>
 
           <motion.h1
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-4xl md:text-6xl lg:text-7xl font-serif font-bold leading-tight mb-6"
+            transition={{ duration: 0.8, delay: 0.5 }}
+            className="text-4xl sm:text-5xl md:text-7xl font-serif font-semibold leading-[1.1] text-white mb-5"
+            style={{ textShadow: "0 2px 16px rgba(0,0,0,0.6), 0 4px 32px rgba(0,0,0,0.3)" }}
           >
-            Discover the{" "}
-            <span className="text-gradient-mystic">Magic</span> of{" "}
-            <br className="hidden md:block" />
-            Healing Crystals
+            Crystals that
+            <br />
+            <span className="italic font-normal">speak to your soul</span>
           </motion.h1>
 
           <motion.p
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-lg md:text-xl text-muted-foreground mb-8 max-w-xl"
+            transition={{ duration: 0.8, delay: 0.7 }}
+            className="text-sm sm:text-base md:text-lg text-white/70 max-w-md mx-auto mb-9 font-light leading-relaxed"
+            style={{ textShadow: "0 2px 8px rgba(0,0,0,0.5)" }}
           >
-            Handpicked natural crystals and spiritual products to bring 
-            positive energy, peace, and abundance into your life.
+            Discover our curated collection of healing crystals, designed to
+            bring balance and positive energy into your life.
           </motion.p>
 
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="flex flex-col sm:flex-row gap-4"
+            transition={{ duration: 0.8, delay: 0.9 }}
           >
-            <Button size="lg" className="group">
-              Shop Collection
-              <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
-            </Button>
-            <Button size="lg" variant="outline">
-              Learn About Crystals
-            </Button>
-          </motion.div>
-
-          {/* Trust badges */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.5 }}
-            className="flex flex-wrap items-center gap-6 mt-12 pt-8 border-t border-border/50"
-          >
-            <div className="flex items-center gap-2">
-              <span className="text-2xl">💎</span>
-              <span className="text-sm text-muted-foreground">100% Natural Crystals</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-2xl">🚚</span>
-              <span className="text-sm text-muted-foreground">Free Shipping ₹2000+</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-2xl">✨</span>
-              <span className="text-sm text-muted-foreground">Energized & Blessed</span>
-            </div>
+            <Link to="/shop">
+              <Button
+                size="lg"
+                className="group rounded-full px-8 py-6 text-sm tracking-wide uppercase bg-white text-black hover:bg-white/90 transition-all duration-300"
+              >
+                Explore Collection
+                <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+              </Button>
+            </Link>
           </motion.div>
         </div>
       </div>
 
-      {/* Decorative elements */}
-      <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-background to-transparent" />
+      {/* ─── Minimal progress bar ─── */}
+      <div className="relative z-10 pb-8 flex justify-center">
+        <div className="flex gap-2">
+          {slides.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentSlide(index)}
+              className="group relative h-[2px] w-8 bg-white/20 overflow-hidden rounded-full"
+              aria-label={`Go to slide ${index + 1}`}
+            >
+              <motion.span
+                className="absolute inset-y-0 left-0 bg-white rounded-full"
+                initial={{ width: "0%" }}
+                animate={{
+                  width: index === currentSlide ? "100%" : "0%",
+                }}
+                transition={{
+                  duration: index === currentSlide ? 6 : 0.3,
+                  ease: "linear",
+                }}
+              />
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Scroll hint */}
+      <motion.div
+        className="absolute bottom-14 left-1/2 -translate-x-1/2 z-10"
+        animate={{ y: [0, 6, 0] }}
+        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+      >
+        <div className="w-[1px] h-8 bg-gradient-to-b from-white/40 to-transparent" />
+      </motion.div>
     </section>
   );
 };

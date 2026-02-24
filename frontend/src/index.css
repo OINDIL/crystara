@@ -155,7 +155,12 @@
     @apply bg-background text-foreground font-sans antialiased;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply font-serif;
   }
 }
@@ -196,18 +201,21 @@
     left: -100%;
     width: 50%;
     height: 100%;
-    background: linear-gradient(
-      90deg,
-      transparent,
-      hsl(0 0% 100% / 0.2),
-      transparent
-    );
+    background: linear-gradient(90deg,
+        transparent,
+        hsl(0 0% 100% / 0.2),
+        transparent);
     animation: shimmer 3s infinite;
   }
 
   @keyframes shimmer {
-    0% { left: -100%; }
-    100% { left: 200%; }
+    0% {
+      left: -100%;
+    }
+
+    100% {
+      left: 200%;
+    }
   }
 
   .animate-float {
@@ -215,8 +223,15 @@
   }
 
   @keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
+
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+
+    50% {
+      transform: translateY(-10px);
+    }
   }
 
   .animate-glow-pulse {
@@ -224,7 +239,14 @@
   }
 
   @keyframes glow-pulse {
-    0%, 100% { box-shadow: 0 0 20px hsl(270 50% 55% / 0.3); }
-    50% { box-shadow: 0 0 40px hsl(270 50% 55% / 0.6); }
+
+    0%,
+    100% {
+      box-shadow: 0 0 20px hsl(270 50% 55% / 0.3);
+    }
+
+    50% {
+      box-shadow: 0 0 40px hsl(270 50% 55% / 0.6);
+    }
   }
 }
